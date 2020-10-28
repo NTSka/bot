@@ -1,0 +1,32 @@
+{
+  "name": "pidor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node build/src/app.js",
+    "lint": "eslint src/** --ext .ts,.tsx",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.34.0",
+    "@typescript-eslint/parser": "^2.34.0",
+    "eslint": "^7.12.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-config-airbnb-typescript": "^12.0.0",
+    "eslint-config-prettier": "^6.14.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.1.2",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "@types/node": "^14.14.5",
+    "discord.js": "^12.4.0",
+    "dotenv": "^8.2.0"
+  }
+}
