@@ -116,8 +116,8 @@ export const getWinner = wrapped<User | null, void>((data) => {
 });
 
 export const getTop = wrapped<Top, void>((data):SaveDataAttributes<Top> => {
-  const keys = Object.values(data.morningWinners).concat(Object.values(data.eveningWinners));
-
+  const keys = Object.values(data.winners).concat(Object.values(data.morningWinners).concat(Object.values(data.eveningWinners)));
+  console.log(keys);
   const top = keys.reduce((acc: Top, i) => {
     if (!acc[i.id]) {
       acc[i.id] = 0;

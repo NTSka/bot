@@ -13,15 +13,18 @@ export const specialPidor = async (msg: Message) => {
 
   if (!config.allowedId.includes(author.id)) {
     msg.channel.send('Ну ты и пиииидор');
+    return;
   }
 
   if (!guild) {
+    console.log('no guild');
     return;
   }
 
   const role = guild.roles.cache.get(config.specialRole);
 
   if (!role) {
+    console.log('no role');
     return;
   }
 
