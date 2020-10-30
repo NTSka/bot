@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { handleWinner, handleAddUser, handleRemoveUser, handleTop } from './pidor';
+import { handleWinner, handleAddUser, handleRemoveUser, handleTop, specialPidor } from './pidor';
 import { handleMute, handleUnmute } from './mute';
 
 export type Handler = (message: Message) => Promise<void>
@@ -34,6 +34,10 @@ const handlers: Binding[] = [
   {
     validation: /^!u$/,
     handle: handleUnmute,
+  },
+  {
+    validation: /^!s$/,
+    handle: specialPidor,
   },
 ];
 

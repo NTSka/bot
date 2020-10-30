@@ -5,6 +5,7 @@
     "lib": ["es6"],
     "strict": true,
     "moduleResolution": "node",
+    "esModuleInterop": true,
     "sourceMap": true,
     "outDir": "build/src",
     "baseUrl": ".",

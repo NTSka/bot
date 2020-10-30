@@ -1,8 +1,53 @@
 import { Message } from 'discord.js';
-import { addUser, getTop, getWinner, randomUser, removeUser } from '../data';
+import { resolve } from 'path';
+import { addSpecialWinners, addUser, getTop, getWinner, randomUser, removeUser } from '../data';
 import phrases from './data/pidor_phrases';
 import { wait } from '../helpers/time';
 import random from '../helpers/random';
+import config from '../config';
+
+export const specialPidor = async (msg: Message) => {
+  const { author, guild, channel, member } = msg;
+  await msg.delete({ timeout: 0 });
+
+  if (!config.allowedId.includes(author.id)) {
+    msg.channel.send('Ну ты и пиииидор');
+  }
+
+  if (!guild) {
+    return;
+  }
+
+  const role = guild.roles.cache.get(config.specialRole);
+
+  if (!role) {
+    return;
+  }
+
+  const ids = role.members.map((i) => ({ id: i.user.id, username: i.user.username }));
+
+  const winner = addSpecialWinners(ids);
+
+  channel.send(`<@${winner.id}> петушара`);
+
+  if (!member) {
+    return;
+  }
+
+  const voiceChanel = member.voice.channel;
+  if (!voiceChanel) {
+    return;
+  }
+
+  if (voiceChanel.members.find((i) => winner.id === i.user.id)) {
+    const connection = await voiceChanel.join();
+    const dispatcher = await connection.play(resolve(process.cwd(), 'assets/audio/petushara.mp3'));
+    dispatcher.on('finish', async () => {
+      await dispatcher.destroy();
+      await voiceChanel.leave();
+    });
+  }
+};
 
 export const handleAddUser = async (msg: Message) => {
   const { author, channel } = msg;

@@ -10,6 +10,9 @@ export interface Winners {
 export interface Storage {
     users: User[];
     winners: Winners;
+    morningWinners: Winners
+    eveningWinners: Winners
+    specialWinners: User[]
 }
 
 export interface Top {
