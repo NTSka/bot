@@ -36,7 +36,7 @@ const handlers: Binding[] = [
     handle: handleUnmute,
   },
   {
-    validation: /^!s$/,
+    validation: /^\\sr$/,
     handle: specialPidor,
   },
 ];

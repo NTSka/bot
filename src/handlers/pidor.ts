@@ -7,6 +7,7 @@ import random from '../helpers/random';
 import config from '../config';
 
 export const specialPidor = async (msg: Message) => {
+  console.log('special pidor action');
   const { author, guild, channel, member } = msg;
   await msg.delete({ timeout: 0 });
 
@@ -47,36 +48,43 @@ export const specialPidor = async (msg: Message) => {
       await voiceChanel.leave();
     });
   }
+  console.log(`special pidor ${winner.username}`);
 };
 
 export const handleAddUser = async (msg: Message) => {
+  console.log('action add user');
   const { author, channel } = msg;
   await msg.delete({ timeout: 0 });
 
   if (await addUser(author)) {
     channel.send(`<@${author.id}> добавлен в рулетку. Ты обязательно станешь пидором, я верю в тебя! <3`);
+    console.log(`User ${author.username} added`);
   } else {
     channel.send(`<@${author.id}> ты уже в пидрильном розыгрыше!`);
   }
 };
 
 export const handleRemoveUser = async (msg: Message) => {
+  console.log('action remove user');
   const { author, channel } = msg;
 
   if (await removeUser(author)) {
     channel.send(`<@${author.id}> ну и пошел на хуй, пидрила`);
+    console.log(`user ${author.username} removed`);
   } else {
     channel.send(`<@${author.id}> ты и так не учавствовал, петушила`);
   }
 };
 
 export const handleWinner = async (msg: Message) => {
+  console.log('get winner');
   const { channel } = msg;
   await msg.delete({ timeout: 0 });
 
   const winner = getWinner();
   if (winner) {
     await channel.send(`<@${winner.id}> сегодня пидорас дня.`);
+    console.log(`winner already chosed ${winner.username}`);
     return;
   }
 
@@ -88,14 +96,17 @@ export const handleWinner = async (msg: Message) => {
     await wait(2000);
   }, Promise.resolve());
 
-  const { id } = randomUser();
+  const { id, username } = randomUser();
 
   const randomResultPhrase = phrases.result[random(0, phrases.result.length)];
 
   await channel.send(`${randomResultPhrase}<@${id}>`);
+
+  console.log(`winner is ${username}`);
 };
 
 export const handleTop = async (msg: Message) => {
+  console.log('handle top');
   const { channel } = msg;
   await msg.delete({ timeout: 0 });
 
@@ -107,4 +118,5 @@ export const handleTop = async (msg: Message) => {
     .sort((a, b) => b[1] - a[1])
     .map(([key, value]) => `<@${key}>: ${value} раз`).join('\n');
   channel.send(text);
+  console.log('top handled  ');
 };
