@@ -20,7 +20,9 @@ const handleVoiceChat = async (msg: Message, text: string, state: boolean) => {
     return;
   }
 
-  const clientUser = client.user || {};
+  const clientUser = client.user || {
+    id: '',
+  };
 
   await Promise
     .all(msg.member.voice.channel.members
