@@ -3,7 +3,7 @@ import {
   handleAddUser,
   handleRemoveUser,
   handleTop,
-  handleList, handleRemoveUserByAdmin, handleRemoveFromTopByAdmin, handleHelp,
+  handleList, handleRemoveUserByAdmin, handleRemoveFromTopByAdmin, handleHelp, handleWinner,
 } from './pidor';
 import { handleMute, handleUnmute } from './mute';
 
@@ -43,7 +43,10 @@ const handlers: Binding[] = [
     validation: /^!t$/,
     handle: handleTop,
   },
-
+  {
+    validation: /^!w$/,
+    handle: handleWinner,
+  },
   {
     validation: /^!m$/,
     handle: handleMute,

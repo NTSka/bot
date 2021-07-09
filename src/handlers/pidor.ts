@@ -2,7 +2,7 @@ import { Message } from 'discord.js';
 import {
   addUser,
   getList,
-  getTop, removeFromTopById,
+  getTop, getWinner, removeFromTopById,
   removeUser, removeUserById,
 } from '../data';
 import config from '../config';
@@ -21,6 +21,7 @@ export const handleHelp = async (msg:Message) => {
   !r - удалиться из розыгрыша
   !l - список претендентов на звание пидора
   !t - список успешных людей
+  !w - пидор дня!
   Только для админов:
   !rua @username - удалить участника из розыгрыша
   !rta @username - удалить все заслуги участника
@@ -130,8 +131,23 @@ export const handleList = async (msg: Message) => {
     .map((v) => `:rainbow_flag: <@${v.id}>`)
     .join('\n');
   await channel.send(text);
-  console.log('top handled  ');
+  console.log('top handled');
 };
+
+export const handleWinner = async (msg: Message) => {
+  console.log('get winner');
+  const { channel } = msg;
+  await msg.delete(({ timeout: 0 }));
+
+  const winner = getWinner();
+  if (!winner) {
+    await channel.send('Сегодня еще никто не побеждал');
+    return;
+  }
+
+  await channel.send(`Пидор сегодняшнего дня - <@${winner.id}>`);
+  console.log('winner handled');
+}
 
 export const handleTop = async (msg: Message) => {
   console.log('handle top');
