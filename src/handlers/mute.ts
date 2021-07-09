@@ -8,7 +8,7 @@ const handleVoiceChat = async (msg: Message, text: string, state: boolean) => {
     return;
   }
 
-  if (!config.allowedId.includes(msg.author.id)) {
+  if (!config.admins.includes(msg.author.username)) {
     msg.channel.send(text);
     await msg.member.voice.setMute(true);
     return;

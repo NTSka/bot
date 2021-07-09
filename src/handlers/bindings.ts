@@ -1,5 +1,10 @@
 import { Message } from 'discord.js';
-import { handleWinner, handleAddUser, handleRemoveUser, handleTop, specialPidor } from './pidor';
+import {
+  handleAddUser,
+  handleRemoveUser,
+  handleTop,
+  handleList, handleRemoveUserByAdmin, handleRemoveFromTopByAdmin, handleHelp,
+} from './pidor';
 import { handleMute, handleUnmute } from './mute';
 
 export type Handler = (message: Message) => Promise<void>
@@ -11,6 +16,10 @@ export interface Binding {
 
 const handlers: Binding[] = [
   {
+    validation: /^!cum$/,
+    handle: handleHelp,
+  },
+  {
     validation: /^!a$/,
     handle: handleAddUser,
   },
@@ -19,8 +28,16 @@ const handlers: Binding[] = [
     handle: handleRemoveUser,
   },
   {
-    validation: /^!g$/,
-    handle: handleWinner,
+    validation: /^!rua */,
+    handle: handleRemoveUserByAdmin,
+  },
+  {
+    validation: /^!rta */,
+    handle: handleRemoveFromTopByAdmin,
+  },
+  {
+    validation: /^!l$/,
+    handle: handleList,
   },
   {
     validation: /^!t$/,
@@ -34,10 +51,6 @@ const handlers: Binding[] = [
   {
     validation: /^!u$/,
     handle: handleUnmute,
-  },
-  {
-    validation: /^\\sr$/,
-    handle: specialPidor,
   },
 ];
 

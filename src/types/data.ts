@@ -1,20 +1,19 @@
-export interface User {
+export type User = {
     id: string;
     username: string;
 }
 
-export interface Winners {
+export type List = Array<User>
+
+export type Winners = {
     [key: string]: User;
 }
 
-export interface Storage {
+export type Storage = {
     users: User[];
     winners: Winners;
-    morningWinners: Winners
-    eveningWinners: Winners
-    specialWinners: User[]
 }
 
-export interface Top {
+export type Top = {
     [key: string]: number
 }

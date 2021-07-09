@@ -1,19 +1,17 @@
 require('dotenv').config();
 
-export interface Index {
+export type Index = {
   discord: {
       token?: string
   },
-  allowedId: string[],
-  specialRole: string
+  admins: string[]
 }
 
 const config: Index = {
   discord: {
     token: process.env.DISCORD_TOKEN,
   },
-  allowedId: (process.env.ALLOWED_ID || '').split(','),
-  specialRole: process.env.SPECIAL_ROLE || '',
+  admins: (process.env.ADMINS || '').split(','),
 };
 
 export default config;

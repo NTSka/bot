@@ -1,7 +1,8 @@
 import { existsSync, writeFileSync, readFileSync } from 'fs';
 import { resolve } from 'path';
-import { Storage, Top, User } from '../types/data';
-import { getDate, isMorning } from '../helpers/time';
+// eslint-disable-next-line import/namespace
+import { Storage, Top, User, List, Winners } from '../types/data';
+import { getDate } from '../helpers/time';
 import random from '../helpers/random';
 
 const filePath = resolve(process.cwd(), './storage/pidor.json');
@@ -20,9 +21,6 @@ const loadData = (): Storage => {
     data = {
       users: [],
       winners: {},
-      morningWinners: {},
-      eveningWinners: {},
-      specialWinners: [],
     };
   }
 
@@ -34,18 +32,6 @@ const loadData = (): Storage => {
     data.winners = {};
   }
 
-  if (!data.specialWinners) {
-    data.specialWinners = [];
-  }
-
-  if (!data.morningWinners) {
-    data.morningWinners = {};
-  }
-
-  if (!data.eveningWinners) {
-    data.eveningWinners = {};
-  }
-
   return data;
 };
 
@@ -54,7 +40,10 @@ interface SaveDataAttributes<T> {
   result: T;
 }
 
-const saveData = <T>({ data, result }: SaveDataAttributes<T>) => {
+const saveData = <T>({
+  data,
+  result,
+}: SaveDataAttributes<T>) => {
   try {
     if (data) {
       writeFileSync(filePath, JSON.stringify(data));
@@ -69,15 +58,23 @@ const saveData = <T>({ data, result }: SaveDataAttributes<T>) => {
 
 type DataAction<T, K> = (data: Storage, arg: K) => SaveDataAttributes<T>
 
-const wrapped = <T, K>
-  (func: DataAction<T, K>) => (arg: K) => saveData(func(loadData(), arg));
+const wrapped = <T, K>(func: DataAction<T, K>) => (arg: K) => saveData(func(loadData(), arg));
 
 export const addUser = wrapped<boolean, User>(
-  (data, { id, username }): SaveDataAttributes<boolean> => {
+  (data, {
+    id,
+    username,
+  }): SaveDataAttributes<boolean> => {
     if (!data.users.find((i) => i.username === username && id === i.id)) {
-      data.users.push({ id, username });
+      data.users.push({
+        id,
+        username,
+      });
 
-      return { data, result: true };
+      return {
+        data,
+        result: true,
+      };
     }
 
     return { result: false };
@@ -85,28 +82,71 @@ export const addUser = wrapped<boolean, User>(
 );
 
 export const removeUser = wrapped<boolean, User>(
-  (data, { id, username }): SaveDataAttributes<boolean> => {
+  (data, {
+    id,
+    username,
+  }): SaveDataAttributes<boolean> => {
     const index = data.users.findIndex((i) => i.username === username && id === i.id);
     if (index >= 0) {
       data.users = data.users.slice(0, index)
         .concat(data.users.slice(index + 1, data.users.length));
 
-      return { data, result: true };
+      return {
+        data,
+        result: true,
+      };
     }
 
     return { result: false };
   },
 );
 
+export const removeUserById = wrapped<boolean, string>(
+  (data, id): SaveDataAttributes<boolean> => {
+    const index = data.users.findIndex((i) => i.id === id);
+    if (index >= 0) {
+      data.users = data.users.slice(0, index)
+        .concat(data.users.slice(index + 1, data.users.length));
+
+      return {
+        data,
+        result: true,
+      };
+    }
+
+    return { result: false };
+  },
+);
+
+export const removeFromTopById = wrapped<boolean, string>(
+  (data, id): SaveDataAttributes<boolean> => {
+    const newWinners: Winners = {};
+    Object.entries(data.winners)
+      .forEach(([date, winner]) => {
+        if (winner.id !== id) {
+          newWinners[date] = winner;
+        }
+      });
+
+    return {
+      result: true,
+      data,
+    };
+  },
+);
+
 export const randomUser = wrapped<User, void>((data): SaveDataAttributes<User> => {
   const winner = data.users[random(0, data.users.length)];
-  (isMorning() ? data.morningWinners : data.eveningWinners)[getDate()] = winner;
+  (data.winners)[getDate()] = winner;
 
-  return { result: winner, data };
+  return {
+    result: winner,
+    data,
+  };
 });
 
 export const getWinner = wrapped<User | null, void>((data) => {
-  const winnersMap = isMorning() ? data.morningWinners : data.eveningWinners;
+  const winnersMap = data.winners;
   const winner = winnersMap[getDate()];
   if (winner) {
     return { result: winner };
@@ -115,9 +155,15 @@ export const getWinner = wrapped<User | null, void>((data) => {
   return { result: null };
 });
 
-export const getTop = wrapped<Top, void>((data):SaveDataAttributes<Top> => {
-  const keys = Object.values(data.winners).concat(Object.values(data.morningWinners).concat(Object.values(data.eveningWinners)));
-  console.log(keys);
+export const getList = wrapped<List, void>((data: Storage): SaveDataAttributes<List> => {
+  const list = Object.values(data.users);
+
+  return { result: list };
+});
+
+export const getTop = wrapped<Top, void>((data): SaveDataAttributes<Top> => {
+  const keys = Object.values(data.winners);
+
   const top = keys.reduce((acc: Top, i) => {
     if (!acc[i.id]) {
       acc[i.id] = 0;
@@ -129,12 +175,4 @@ export const getTop = wrapped<Top, void>((data):SaveDataAttributes<Top> => {
   }, {});
 
   return { result: top };
-});
-
-export const addSpecialWinners = wrapped<User, User[]>((data, users):SaveDataAttributes<User> => {
-  const winner = users[random(0, users.length)];
-
-  data.specialWinners.push(winner);
-
-  return { data, result: winner };
 });
